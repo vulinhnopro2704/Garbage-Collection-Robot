@@ -85,9 +85,9 @@ export default function ControlScreen(): React.ReactElement {
 			{/* Header with connection status and settings */}
 			<View style={styles.header}>
 				<ConnectionStatus isConnected={isConnected} />
-				<Text style={styles.title}>Trash Collector Control</Text>
+				<Text style={styles.title}>Control</Text>
 				<SettingsButton
-					onPress={() => router.push("/(tabs)/explore")}
+					onPress={() => router.push("/(tabs)/setting")}
 				/>
 			</View>
 

@@ -1,12 +1,5 @@
-import React from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	TouchableOpacity,
-	Animated,
-} from "react-native";
-import { Audio } from "expo-av";
+import React, { useEffect } from "react";
+import { View, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 interface ModeSwitchProps {
@@ -20,92 +13,62 @@ const ModeSwitch: React.FC<ModeSwitchProps> = ({
 	onModeChange,
 	disabled = false,
 }) => {
-	const [sound, setSound] = React.useState<Audio.Sound | null>(null);
 	const slideAnim = React.useRef(
 		new Animated.Value(isAutoMode ? 1 : 0)
 	).current;
 
-	React.useEffect(() => {
-		// 	const loadSound = async () => {
-		// 		// const { sound } = await Audio.Sound.createAsync(
-		// 		// 	require("../assets/sounds/switch-mode.mp3")
-		// 		// );
-		// 		// setSound(sound);
-		// 	};
-		// 	loadSound();
-		// 	return () => {
-		// 		if (sound) {
-		// 			sound.unloadAsync();
-		// 		}
-		// 	};
-		// }, []);
-		// React.useEffect(() => {
-		// 	Animated.timing(slideAnim, {
-		// 		toValue: isAutoMode ? 1 : 0,
-		// 		duration: 300,
-		// 		useNativeDriver: true,
-		// 	}).start();
+	useEffect(() => {
+		Animated.timing(slideAnim, {
+			toValue: isAutoMode ? 1 : 0,
+			duration: 300,
+			useNativeDriver: true,
+		}).start();
 	}, [isAutoMode, slideAnim]);
 
-	const playSound = async () => {
-		// if (sound) {
-		// 	await sound.replayAsync();
-		// }
-	};
-
-	const handleToggle = async (autoMode: boolean) => {
+	const handleToggle = (autoMode: boolean) => {
 		if (disabled) return;
-
-		await playSound();
 		onModeChange(autoMode);
 	};
 
-	const translateX = slideAnim.interpolate({
+	// Animate on Y-axis instead of X-axis
+	const translateY = slideAnim.interpolate({
 		inputRange: [0, 1],
-		outputRange: [0, 120],
+		outputRange: [0, 50], // Height of each option
 	});
 
 	return (
 		<View style={[styles.container, disabled && styles.disabled]}>
+			{/* Animated slider background */}
 			<Animated.View
-				style={[styles.slider, { transform: [{ translateX }] }]}
+				style={[styles.slider, { transform: [{ translateY }] }]}
 			/>
 
+			{/* Manual mode button (top) */}
 			<TouchableOpacity
 				style={styles.option}
 				onPress={() => handleToggle(false)}
 				disabled={disabled}
+				activeOpacity={0.7}
 			>
 				<FontAwesome5
 					name="gamepad"
-					size={20}
+					size={24}
 					color={!isAutoMode ? "#fff" : "#666"}
 				/>
-				<Text
-					style={[
-						styles.optionText,
-						!isAutoMode && styles.activeText,
-					]}
-				>
-					Manual
-				</Text>
 			</TouchableOpacity>
 
+			{/* Auto mode button (bottom) */}
 			<TouchableOpacity
 				style={styles.option}
 				onPress={() => handleToggle(true)}
 				disabled={disabled}
+				activeOpacity={0.7}
 			>
 				<FontAwesome5
 					name="robot"
-					size={20}
+					size={24}
 					color={isAutoMode ? "#fff" : "#666"}
 				/>
-				<Text
-					style={[styles.optionText, isAutoMode && styles.activeText]}
-				>
-					Auto
-				</Text>
 			</TouchableOpacity>
 		</View>
 	);
@@ -113,18 +76,18 @@ const ModeSwitch: React.FC<ModeSwitchProps> = ({
 
 const styles = StyleSheet.create({
 	container: {
-		width: 240,
-		height: 50,
+		width: 50,
+		height: 100,
 		borderRadius: 25,
-		flexDirection: "row",
+		flexDirection: "column", // Changed from row to column
 		backgroundColor: "#f0f0f0",
 		position: "relative",
 		padding: 5,
 	},
 	slider: {
 		position: "absolute",
-		width: 120,
-		height: 40,
+		width: 40,
+		height: 40, // Square shape for the slider
 		borderRadius: 20,
 		backgroundColor: "#007AFF",
 		top: 5,
@@ -134,16 +97,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		flexDirection: "row",
 		zIndex: 1,
-	},
-	optionText: {
-		marginLeft: 5,
-		fontWeight: "600",
-		color: "#666",
-	},
-	activeText: {
-		color: "#fff",
 	},
 	disabled: {
 		opacity: 0.5,

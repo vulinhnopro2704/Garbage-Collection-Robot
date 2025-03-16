@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated } from "react-native";
 import Slider from "@react-native-community/slider";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Audio } from "expo-av";
+import { Colors } from "@/constants/Colors";
 
 interface SpeedSliderProps {
 	speed: number;
@@ -18,23 +19,7 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({
 	disabled = false,
 }) => {
 	const [isSliding, setIsSliding] = useState(false);
-	const [sound, setSound] = React.useState<Audio.Sound | null>(null);
 	const pulseAnim = React.useRef(new Animated.Value(1)).current;
-
-	React.useEffect(() => {
-		// const loadSound = async () => {
-		// 	const { sound } = await Audio.Sound.createAsync(
-		// 		require("../assets/sounds/slider-tick.mp3")
-		// 	);
-		// 	setSound(sound);
-		// };
-		// loadSound();
-		// return () => {
-		// 	if (sound) {
-		// 		sound.unloadAsync();
-		// 	}
-		// };
-	}, []);
 
 	React.useEffect(() => {
 		if (isSliding) {
@@ -66,42 +51,21 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({
 		).start();
 	};
 
-	const playTickSound = async () => {
-		if (sound) {
-			try {
-				await sound.setPositionAsync(0);
-				await sound.playAsync();
-			} catch (error) {
-				console.error("Failed to play sound", error);
-			}
-		}
-	};
-
 	const handleValueChange = (value: number) => {
 		const roundedValue = Math.round(value);
-		if (Math.abs(roundedValue - speed) >= 5) {
-			playTickSound();
-		}
 		onSpeedChange(roundedValue);
 	};
 
 	// Calculate the color based on speed value
 	const getSpeedColor = () => {
-		if (speed < 30) return "#4CD964"; // Green
-		if (speed < 70) return "#FF9500"; // Orange
-		return "#FF3B30"; // Red
+		if (speed < 30) return Colors.success; // Green
+		if (speed < 70) return Colors.warning; // Orange
+		return Colors.error; // Red
 	};
-
-	const iconName =
-		speed < 30
-			? "tachometer-alt"
-			: speed < 70
-			? "tachometer-alt"
-			: "tachometer-alt";
 
 	return (
 		<View style={[styles.container, disabled && styles.disabled]}>
-			<View style={styles.header}>
+			<View style={styles.sliderContainer}>
 				<Animated.View
 					style={[
 						styles.iconContainer,
@@ -109,39 +73,35 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({
 					]}
 				>
 					<FontAwesome5
-						name={iconName}
-						size={20}
+						name="tachometer-alt"
+						size={14}
 						color={getSpeedColor()}
 					/>
 				</Animated.View>
+
+				<Slider
+					style={styles.slider}
+					minimumValue={0}
+					maximumValue={100}
+					step={1}
+					value={speed}
+					minimumTrackTintColor={getSpeedColor()}
+					maximumTrackTintColor="#D1D1D6"
+					thumbTintColor={getSpeedColor()}
+					disabled={disabled}
+					onValueChange={handleValueChange}
+					onSlidingStart={() => setIsSliding(true)}
+					onSlidingComplete={(value) => {
+						setIsSliding(false);
+						if (onValueChangeEnd) {
+							onValueChangeEnd(Math.round(value));
+						}
+					}}
+				/>
+
 				<Text style={[styles.speedValue, { color: getSpeedColor() }]}>
 					{speed}%
 				</Text>
-			</View>
-
-			<Slider
-				style={styles.slider}
-				minimumValue={0}
-				maximumValue={100}
-				step={1}
-				value={speed}
-				minimumTrackTintColor={getSpeedColor()}
-				maximumTrackTintColor="#D1D1D6"
-				thumbTintColor={getSpeedColor()}
-				disabled={disabled}
-				onValueChange={handleValueChange}
-				onSlidingStart={() => setIsSliding(true)}
-				onSlidingComplete={(value) => {
-					setIsSliding(false);
-					if (onValueChangeEnd) {
-						onValueChangeEnd(Math.round(value));
-					}
-				}}
-			/>
-
-			<View style={styles.labels}>
-				<Text style={styles.labelText}>Slow</Text>
-				<Text style={styles.labelText}>Fast</Text>
 			</View>
 		</View>
 	);
@@ -149,43 +109,37 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 16,
-		backgroundColor: "#F2F2F7",
-		borderRadius: 12,
+		padding: 10,
+		backgroundColor: "rgba(242, 242, 247, 0.7)",
+		borderRadius: 10,
+		height: 50,
 	},
 	disabled: {
 		opacity: 0.5,
 	},
-	header: {
+	sliderContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginBottom: 8,
+		justifyContent: "center",
 	},
 	iconContainer: {
-		width: 40,
-		height: 40,
-		borderRadius: 20,
+		width: 28,
+		height: 28,
+		borderRadius: 14,
 		backgroundColor: "rgba(0,0,0,0.05)",
 		justifyContent: "center",
 		alignItems: "center",
-		marginRight: 10,
 	},
 	speedValue: {
-		fontSize: 24,
+		fontSize: 16,
 		fontWeight: "bold",
+		width: 40,
+		textAlign: "right",
 	},
 	slider: {
-		width: "100%",
+		flex: 1,
 		height: 40,
-	},
-	labels: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		paddingHorizontal: 10,
-	},
-	labelText: {
-		fontSize: 12,
-		color: "#8E8E93",
+		marginHorizontal: 8,
 	},
 });
 

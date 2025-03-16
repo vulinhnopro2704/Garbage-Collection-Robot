@@ -7,7 +7,7 @@ import {
 	Animated,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { RobotCommand } from "@/app/(tabs)/control";
+import { RobotCommand } from "@/app/(tabs)";
 
 interface ActionControlsProps {
 	onPress: (command: RobotCommand) => void;
