@@ -49,13 +49,13 @@ const ControlButton: React.FC<ControlButtonProps> = ({
 	};
 
 	const playSound = async () => {
-		if (sound) {
-			try {
-				await sound.replayAsync();
-			} catch (error) {
-				console.log("Failed to play sound", error);
-			}
-		}
+		// if (sound) {
+		// 	try {
+		// 		await sound.replayAsync();
+		// 	} catch (error) {
+		// 		console.log("Failed to play sound", error);
+		// 	}
+		// }
 	};
 
 	const handlePressIn = () => {
