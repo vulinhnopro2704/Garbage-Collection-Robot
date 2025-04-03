@@ -39,23 +39,23 @@ const ControlButton: React.FC<ControlButtonProps> = ({
 
 	const loadSound = async () => {
 		try {
-			// const { sound: buttonSound } = await Audio.Sound.createAsync(
-			// 	require("../assets/sounds/button-press.mp3")
-			// );
-			// setSound(buttonSound);
+			const { sound: buttonSound } = await Audio.Sound.createAsync(
+				require("../../../assets/sounds/button-press.mp3")
+			);
+			setSound(buttonSound);
 		} catch (error) {
 			console.log("Failed to load sound", error);
 		}
 	};
 
 	const playSound = async () => {
-		// if (sound) {
-		// 	try {
-		// 		await sound.replayAsync();
-		// 	} catch (error) {
-		// 		console.log("Failed to play sound", error);
-		// 	}
-		// }
+		if (sound) {
+			try {
+				await sound.replayAsync();
+			} catch (error) {
+				console.log("Failed to play sound", error);
+			}
+		}
 	};
 
 	const handlePressIn = () => {

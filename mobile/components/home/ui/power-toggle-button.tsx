@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
 	StyleSheet,
-	View,
 	TouchableOpacity,
 	Text,
 	Animated,
@@ -35,11 +34,11 @@ const PowerToggleButton: React.FC<PowerToggleButtonProps> = ({
 	}, [sound]);
 
 	const loadSound = async () => {
-		// const { sound } = await Audio.Sound.createAsync(
-		// 	require("../assets/sounds/power-toggle.mp3"),
-		// 	{ shouldPlay: false }
-		// );
-		// setSound(sound);
+		const { sound } = await Audio.Sound.createAsync(
+			require("../../../assets/sounds/power-toggle.mp3"),
+			{ shouldPlay: false }
+		);
+		setSound(sound);
 	};
 
 	useEffect(() => {

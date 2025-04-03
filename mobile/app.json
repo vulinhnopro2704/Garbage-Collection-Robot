@@ -1,15 +1,23 @@
 {
 	"expo": {
-		"name": "mobile_app",
-		"slug": "mobile_app",
+		"name": "Trash Detector",
+		"slug": "trash-detector",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/images/icon.png",
-		"scheme": "myapp",
+		"scheme": "trashdetector",
 		"userInterfaceStyle": "automatic",
 		"newArchEnabled": true,
 		"ios": {
-			"supportsTablet": true
+			"supportsTablet": true,
+			"infoPlist": {
+				"NSBluetoothAlwaysUsageDescription": "This app uses Bluetooth to connect to your Raspberry Pi device",
+				"NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to connect to your Raspberry Pi device",
+				"UIBackgroundModes": ["bluetooth-central", "bluetooth-central"],
+				"ITSAppUsesNonExemptEncryption": false
+			},
+			"bundleIdentifier": "com.yourname.trashdetector",
+			"buildNumber": "1"
 		},
 		"android": {
 			"adaptiveIcon": {
@@ -22,7 +30,8 @@
 				"android.permission.ACCESS_FINE_LOCATION",
 				"android.permission.BLUETOOTH_CONNECT",
 				"android.permission.BLUETOOTH_SCAN"
-			]
+			],
+			"package": "com.yourname.trashdetector"
 		},
 		"web": {
 			"bundler": "metro",
@@ -44,13 +53,29 @@
 				"react-native-ble-plx",
 				{
 					"isBackgroundEnabled": true,
-					"modes": ["peripheral", "central"],
+					"modes": ["central"],
 					"bluetoothAlwaysPermission": "Allow $(PRODUCT_NAME) to connect to bluetooth devices"
+				}
+			],
+			[
+				"expo-build-properties",
+				{
+					"ios": {
+						"useFrameworks": "static"
+					}
 				}
 			]
 		],
 		"experiments": {
 			"typedRoutes": true
+		},
+		"extra": {
+			"router": {
+				"origin": false
+			},
+			"eas": {
+				"projectId": "38a3b0ba-bb17-45b0-bd2c-f79764f11b8f"
+			}
 		}
 	}
 }
