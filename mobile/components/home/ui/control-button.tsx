@@ -35,7 +35,7 @@ const ControlButton: React.FC<ControlButtonProps> = ({
 					sound.unloadAsync();
 			  }
 			: undefined;
-	}, []);
+	}, [sound]);
 
 	const loadSound = async () => {
 		try {
