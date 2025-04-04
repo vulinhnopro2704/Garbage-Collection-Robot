@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
+import { View, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 
 import { Audio } from "expo-av";
 import { Colors } from "@/constants/Colors";
@@ -8,6 +8,8 @@ import PowerAndModeToggle from "@/components/home/section/power-and-mode-toggle"
 import CameraSection from "@/components/home/section/camera-section";
 import ControlButtonSection from "@/components/home/section/control-button-section";
 import SpeedSliderSection from "@/components/home/section/speed-slider-section";
+import { useSocket } from "@/hooks/useSocket";
+import SpeedSlider from "@/components/home/ui/speed-slider";
 
 // Command types to ensure type safety when sending commands
 type DirectionCommand = "FORWARD" | "BACKWARD" | "LEFT" | "RIGHT" | "STOP";
@@ -26,20 +28,16 @@ export default function ControlScreen(): React.ReactElement {
 	const [isAutoMode, setIsAutoMode] = useState<boolean>(false);
 	const [speed, setSpeed] = useState<number>(50);
 	const [isPoweredOn, setIsPoweredOn] = useState<boolean>(false);
-	// const { isConnected, connectDevice, sendCommand } =
-	// 	useBluetoothConnection();
 	const [sound, setSound] = useState<Audio.Sound | null>(null);
 
-	// useEffect(() => {
-	// 	// Try to connect automatically when component mounts
-	// 	connectDevice().catch(console.error);
-	// }, [connectDevice]);
+	const {isConnected, connect, disconnect, sendCommand} = useSocket()
 
-	// Sound effect for button presses
+
+
 	async function playButtonSound(): Promise<void> {
 		try {
 			const { sound } = await Audio.Sound.createAsync(
-				require("../../assets/sounds/button-press.mp3")
+				require("@/assets/sounds/button-press.mp3")
 			);
 			setSound(sound);
 			await sound.playAsync();
@@ -56,22 +54,35 @@ export default function ControlScreen(): React.ReactElement {
 			: undefined;
 	}, [sound]);
 
+	useEffect(() => {
+		if(!isConnected) {
+			connect()
+		}
+	}, []);
+
+	useEffect(() => {
+		if(!isConnected) {
+			connect()
+		}
+	}, [isConnected]);
+
+
 	const handleCommand = (command: RobotCommand): void => {
 		if (!isPoweredOn) return;
 		playButtonSound().catch(console.error);
-		// sendCommand(command);
+		sendCommand(command, speed);
 	};
 
 	const handleModeChange = (autoMode: boolean): void => {
 		setIsAutoMode(autoMode);
 		playButtonSound().catch(console.error);
-		// sendCommand(autoMode ? "AUTO_MODE" : "MANUAL_MODE");
+		sendCommand(autoMode ? "AUTO_MODE" : "MANUAL_MODE", speed);
 	};
 
 	const handlePowerToggle = (isOn: boolean): void => {
 		setIsPoweredOn(isOn);
 		playButtonSound().catch(console.error);
-		// sendCommand(isOn ? "POWER_ON" : "POWER_OFF");
+		sendCommand(isOn ? "POWER_ON" : "POWER_OFF", speed);
 	};
 
 	return (
@@ -96,6 +107,16 @@ export default function ControlScreen(): React.ReactElement {
 
 			{/* Speed slider */}
 			<SpeedSliderSection isPoweredOn setSpeed={setSpeed} speed={speed} />
+			<View style={[styles.section, styles.speedSection]}>
+				<SpeedSlider
+					speed={speed}
+					onSpeedChange={setSpeed}
+					disabled={!isPoweredOn}
+					onValueChangeEnd={(value: number) =>
+						sendCommand(`SPEED_${value}` as SpeedCommand, speed)
+					}
+				/>
+			</View>
 		</SafeAreaView>
 	);
 }

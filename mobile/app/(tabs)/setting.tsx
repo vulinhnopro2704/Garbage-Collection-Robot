@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "@/constants/Colors";
@@ -9,6 +9,21 @@ import RecentDetections from "@/components/setting/section/recent-detection";
 import AboutSection from "@/components/setting/section/about-section";
 
 export default function Setting() {
+	const [wifiName, setWifiName] = useState("");
+	const [wifiPassword, setWifiPassword] = useState("");
+	const [isConnectingWifi, setIsConnectingWifi] = useState(false);
+
+	const handleWifiConnect = () => {
+		if (!wifiName || !wifiPassword) return;
+
+		setIsConnectingWifi(true);
+		// Simulate connection process
+		setTimeout(() => {
+			setIsConnectingWifi(false);
+			// Show a success message or handle as needed
+		}, 2000);
+	};
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<StatusBar style="dark" />

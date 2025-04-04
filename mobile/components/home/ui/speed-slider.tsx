@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import Slider from "@react-native-community/slider";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { Audio } from "expo-av";
 import { Colors } from "@/constants/Colors";
 
 interface SpeedSliderProps {
@@ -34,7 +33,7 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({
 		}
 	}, [isSliding]);
 
-	const startPulseAnimation = () => {
+	const startPulseAnimation = useCallback(() => {
 		Animated.loop(
 			Animated.sequence([
 				Animated.timing(pulseAnim, {
@@ -49,19 +48,31 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({
 				}),
 			])
 		).start();
-	};
+	}, [pulseAnim]);
 
-	const handleValueChange = (value: number) => {
-		const roundedValue = Math.round(value);
-		onSpeedChange(roundedValue);
-	};
+	const handleValueChange = useCallback(
+		(value: number) => {
+			onSpeedChange(Math.round(value));
+		},
+		[onSpeedChange]
+	);
+
+	const handleSlidingComplete = useCallback(
+		(value: number) => {
+			setIsSliding(false);
+			if (onValueChangeEnd) {
+				onValueChangeEnd(Math.round(value));
+			}
+		},
+		[onValueChangeEnd]
+	);
 
 	// Calculate the color based on speed value
-	const getSpeedColor = () => {
+	const getSpeedColor = useCallback(() => {
 		if (speed < 30) return Colors.success; // Green
 		if (speed < 70) return Colors.warning; // Orange
 		return Colors.error; // Red
-	};
+	}, [speed]);
 
 	return (
 		<View style={[styles.container, disabled && styles.disabled]}>
@@ -91,12 +102,7 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({
 					disabled={disabled}
 					onValueChange={handleValueChange}
 					onSlidingStart={() => setIsSliding(true)}
-					onSlidingComplete={(value) => {
-						setIsSliding(false);
-						if (onValueChangeEnd) {
-							onValueChangeEnd(Math.round(value));
-						}
-					}}
+					onSlidingComplete={handleSlidingComplete}
 				/>
 
 				<Text style={[styles.speedValue, { color: getSpeedColor() }]}>
