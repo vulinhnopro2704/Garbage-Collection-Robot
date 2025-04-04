@@ -20,6 +20,7 @@ const isDevBuild = () => {
 		require("react-native-ble-plx");
 		return true;
 	} catch (e) {
+		console.log("Not in a development build:", e);
 		return false;
 	}
 };
@@ -63,7 +64,7 @@ export const useBluetoothConnection = () => {
 				bleManager.destroy();
 			}
 		};
-	}, []);
+	}, [bleManager]);
 
 	// Request permissions (Android only)
 	const requestPermissions = useCallback(async () => {

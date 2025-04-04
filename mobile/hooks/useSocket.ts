@@ -43,7 +43,9 @@ export const useSocket = () => {
 	const sendCommand = useCallback(
 		(command: string, speed: number) => {
 			if (socket && isConnected) {
-				socket.send(JSON.stringify({ direction: command, speed: speed }));
+				socket.send(
+					JSON.stringify({ direction: command, speed: speed })
+				);
 				console.log(`Sent: ${command}`);
 			} else {
 				console.error("WebSocket is not connected!");

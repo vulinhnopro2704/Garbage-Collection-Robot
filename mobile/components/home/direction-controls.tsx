@@ -1,13 +1,7 @@
 import React from "react";
-import {
-	View,
-	StyleSheet,
-	TouchableOpacity,
-	Text,
-	Animated,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { RobotCommand } from "@/app/(tabs)";
+import { RobotCommand } from "@/constants/command";
 
 interface DirectionControlsProps {
 	onPress: (command: RobotCommand) => void;
@@ -84,17 +78,16 @@ const DirectionControls: React.FC<DirectionControlsProps> = ({
 				break;
 		}
 	};
-	
+
 	const handlePressOut = () => {
 		onPress("STOP");
 	};
-	
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.directionPad}>
 				{/* Up Button */}
-					<DirectionButton
+				<DirectionButton
 					direction="up"
 					iconName="chevron-up"
 					scaleAnim={scaleAnims.up}

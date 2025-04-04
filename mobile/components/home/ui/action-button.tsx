@@ -3,8 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ControlButton from "./control-button";
 import { Colors } from "@/constants/Colors";
-// Use the same command types as in control.tsx for consistency
-type ActionCommand = "GRAB_TRASH" | "ROTATE_BIN";
+import { ActionCommand } from "@/constants/command";
 
 interface ActionControlsProps {
 	onPress: (command: ActionCommand) => void;

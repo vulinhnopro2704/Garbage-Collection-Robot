@@ -10,19 +10,7 @@ import ControlButtonSection from "@/components/home/section/control-button-secti
 import SpeedSliderSection from "@/components/home/section/speed-slider-section";
 import { useSocket } from "@/hooks/useSocket";
 import SpeedSlider from "@/components/home/ui/speed-slider";
-
-// Command types to ensure type safety when sending commands
-type DirectionCommand = "FORWARD" | "BACKWARD" | "LEFT" | "RIGHT" | "STOP";
-type ActionCommand = "GRAB_TRASH" | "ROTATE_BIN";
-type ModeCommand = "AUTO_MODE" | "MANUAL_MODE";
-type PowerCommand = "POWER_ON" | "POWER_OFF";
-type SpeedCommand = `SPEED_${number}`;
-export type RobotCommand =
-	| DirectionCommand
-	| ActionCommand
-	| ModeCommand
-	| PowerCommand
-	| SpeedCommand;
+import { RobotCommand, SpeedCommand } from "@/constants/command";
 
 export default function ControlScreen(): React.ReactElement {
 	const [isAutoMode, setIsAutoMode] = useState<boolean>(false);
@@ -30,9 +18,7 @@ export default function ControlScreen(): React.ReactElement {
 	const [isPoweredOn, setIsPoweredOn] = useState<boolean>(false);
 	const [sound, setSound] = useState<Audio.Sound | null>(null);
 
-	const {isConnected, connect, disconnect, sendCommand} = useSocket()
-
-
+	const { isConnected, connect, sendCommand } = useSocket();
 
 	async function playButtonSound(): Promise<void> {
 		try {
@@ -55,17 +41,16 @@ export default function ControlScreen(): React.ReactElement {
 	}, [sound]);
 
 	useEffect(() => {
-		if(!isConnected) {
-			connect()
+		if (!isConnected) {
+			connect();
 		}
-	}, []);
+	}, [connect, isConnected]);
 
 	useEffect(() => {
-		if(!isConnected) {
-			connect()
+		if (!isConnected) {
+			connect();
 		}
-	}, [isConnected]);
-
+	}, [isConnected, connect]);
 
 	const handleCommand = (command: RobotCommand): void => {
 		if (!isPoweredOn) return;

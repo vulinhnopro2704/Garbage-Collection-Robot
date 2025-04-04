@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	Switch,
-	ActivityIndicator,
-} from "react-native";
+import { Text, StyleSheet, Switch, ActivityIndicator } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useBluetoothConnection } from "@/hooks/use-bluetooth-connection";
 import { Colors } from "@/constants/Colors";
@@ -20,7 +14,6 @@ const BluetoothSettings = () => {
 		isConnected,
 		isScanning,
 		scanForDevices,
-		stopScan,
 		connectDevice,
 		disconnect,
 		connectedDevice,
@@ -59,7 +52,13 @@ const BluetoothSettings = () => {
 		) {
 			scanForDevices();
 		}
-	}, [showDeviceList, isScanning, devices.length, isBluetoothAvailable]);
+	}, [
+		showDeviceList,
+		isScanning,
+		devices.length,
+		isBluetoothAvailable,
+		scanForDevices,
+	]);
 
 	return (
 		<>

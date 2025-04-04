@@ -19,20 +19,6 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({
 }) => {
 	const [isSliding, setIsSliding] = useState(false);
 	const pulseAnim = React.useRef(new Animated.Value(1)).current;
-
-	React.useEffect(() => {
-		if (isSliding) {
-			startPulseAnimation();
-		} else {
-			pulseAnim.setValue(1);
-			Animated.timing(pulseAnim, {
-				toValue: 1,
-				duration: 0,
-				useNativeDriver: true,
-			}).stop();
-		}
-	}, [isSliding]);
-
 	const startPulseAnimation = useCallback(() => {
 		Animated.loop(
 			Animated.sequence([
@@ -49,6 +35,18 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({
 			])
 		).start();
 	}, [pulseAnim]);
+	React.useEffect(() => {
+		if (isSliding) {
+			startPulseAnimation();
+		} else {
+			pulseAnim.setValue(1);
+			Animated.timing(pulseAnim, {
+				toValue: 1,
+				duration: 0,
+				useNativeDriver: true,
+			}).stop();
+		}
+	}, [isSliding, pulseAnim, startPulseAnimation]);
 
 	const handleValueChange = useCallback(
 		(value: number) => {
