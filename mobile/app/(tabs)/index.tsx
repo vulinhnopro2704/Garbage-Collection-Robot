@@ -1,17 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, SafeAreaView, StatusBar } from "react-native";
+import { View, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 
 import { Audio } from "expo-av";
-import ConnectionStatus from "@/components/connection-status";
-// import { useBluetoothConnection } from "@/hooks/use-bluetooth-connection";
-// import { useBluetooth } from "@/hooks/useBluetooth";
-import SettingsButton from "@/components/setting-button";
-import ModeSwitch from "@/components/mode-switch";
-import CameraFrame from "@/components/camera-frame";
-import DirectionControls from "@/components/direction-controls";
-import PowerToggle from "@/components/power-toggle";
-import SpeedSlider from "@/components/speed-slider";
-import { ActionControls } from "@/components/action-control";
 import { Colors } from "@/constants/Colors";
 import Header from "@/components/home/section/header";
 import PowerAndModeToggle from "@/components/home/section/power-and-mode-toggle";
@@ -19,6 +9,7 @@ import CameraSection from "@/components/home/section/camera-section";
 import ControlButtonSection from "@/components/home/section/control-button-section";
 import SpeedSliderSection from "@/components/home/section/speed-slider-section";
 import { useSocket } from "@/hooks/useSocket";
+import SpeedSlider from "@/components/home/ui/speed-slider";
 
 // Command types to ensure type safety when sending commands
 type DirectionCommand = "FORWARD" | "BACKWARD" | "LEFT" | "RIGHT" | "STOP";
@@ -37,18 +28,9 @@ export default function ControlScreen(): React.ReactElement {
 	const [isAutoMode, setIsAutoMode] = useState<boolean>(false);
 	const [speed, setSpeed] = useState<number>(50);
 	const [isPoweredOn, setIsPoweredOn] = useState<boolean>(false);
-	// const { isConnected, connectDevice, sendCommand } =
-	// 	useBluetoothConnection();
 	const [sound, setSound] = useState<Audio.Sound | null>(null);
 
 	const {isConnected, connect, disconnect, sendCommand} = useSocket()
-
-	// useEffect(() => {
-	// 	// Try to connect automatically when component mounts
-	// 	connectDevice().catch(console.error);
-	// }, [connectDevice]);
-
-	// Sound effect for button presses
 
 
 
