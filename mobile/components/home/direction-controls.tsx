@@ -14,6 +14,27 @@ interface DirectionControlsProps {
 	disabled?: boolean;
 }
 
+const DirectionButton: React.FC<{
+	direction: string;
+	iconName: string;
+	scaleAnim: Animated.Value;
+	onPressIn: (direction: string) => void;
+	onPressOut: () => void;
+	disabled: boolean;
+}> = ({ direction, iconName, scaleAnim, onPressIn, onPressOut, disabled }) => (
+	<Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+		<TouchableOpacity
+			style={[styles.button, styles.directionButton]}
+			onPressIn={() => onPressIn(direction)}
+			onPressOut={onPressOut}
+			disabled={disabled}
+			activeOpacity={0.7}
+		>
+			<FontAwesome5 name={iconName} size={24} color="#fff" />
+		</TouchableOpacity>
+	</Animated.View>
+);
+
 const DirectionControls: React.FC<DirectionControlsProps> = ({
 	onPress,
 	disabled = false,
@@ -41,7 +62,7 @@ const DirectionControls: React.FC<DirectionControlsProps> = ({
 		]).start();
 	};
 
-	const handlePress = (direction: string) => {
+	const handlePressIn = (direction: string) => {
 		if (disabled) return;
 
 		switch (direction) {
@@ -63,90 +84,57 @@ const DirectionControls: React.FC<DirectionControlsProps> = ({
 				break;
 		}
 	};
+	
+	const handlePressOut = () => {
+		onPress("STOP");
+	};
+	
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.directionPad}>
 				{/* Up Button */}
-				<Animated.View
-					style={[
-						styles.buttonRow,
-						{ transform: [{ scale: scaleAnims.up }] },
-					]}
-				>
-					<TouchableOpacity
-						style={[styles.button, styles.directionButton]}
-						onPress={() => handlePress("up")}
-						disabled={disabled}
-						activeOpacity={0.7}
-					>
-						<FontAwesome5
-							name="chevron-up"
-							size={24}
-							color="#fff"
-						/>
-					</TouchableOpacity>
-				</Animated.View>
+					<DirectionButton
+					direction="up"
+					iconName="chevron-up"
+					scaleAnim={scaleAnims.up}
+					onPressIn={handlePressIn}
+					onPressOut={handlePressOut}
+					disabled={disabled}
+				/>
 
 				{/* Middle Row (Left, Right) */}
 				<View style={styles.buttonRow}>
-					<Animated.View
-						style={{ transform: [{ scale: scaleAnims.left }] }}
-					>
-						<TouchableOpacity
-							style={[styles.button, styles.directionButton]}
-							onPress={() => handlePress("left")}
-							disabled={disabled}
-							activeOpacity={0.7}
-						>
-							<FontAwesome5
-								name="chevron-left"
-								size={24}
-								color="#fff"
-							/>
-						</TouchableOpacity>
-					</Animated.View>
+					<DirectionButton
+						direction="left"
+						iconName="chevron-left"
+						scaleAnim={scaleAnims.left}
+						onPressIn={handlePressIn}
+						onPressOut={handlePressOut}
+						disabled={disabled}
+					/>
 
 					<View style={styles.centerSpace} />
 
-					<Animated.View
-						style={{ transform: [{ scale: scaleAnims.right }] }}
-					>
-						<TouchableOpacity
-							style={[styles.button, styles.directionButton]}
-							onPress={() => handlePress("right")}
-							disabled={disabled}
-							activeOpacity={0.7}
-						>
-							<FontAwesome5
-								name="chevron-right"
-								size={24}
-								color="#fff"
-							/>
-						</TouchableOpacity>
-					</Animated.View>
+					<DirectionButton
+						direction="right"
+						iconName="chevron-right"
+						scaleAnim={scaleAnims.right}
+						onPressIn={handlePressIn}
+						onPressOut={handlePressOut}
+						disabled={disabled}
+					/>
 				</View>
 
 				{/* Down Button */}
-				<Animated.View
-					style={[
-						styles.buttonRow,
-						{ transform: [{ scale: scaleAnims.down }] },
-					]}
-				>
-					<TouchableOpacity
-						style={[styles.button, styles.directionButton]}
-						onPress={() => handlePress("down")}
-						disabled={disabled}
-						activeOpacity={0.7}
-					>
-						<FontAwesome5
-							name="chevron-down"
-							size={24}
-							color="#fff"
-						/>
-					</TouchableOpacity>
-				</Animated.View>
+				<DirectionButton
+					direction="down"
+					iconName="chevron-down"
+					scaleAnim={scaleAnims.down}
+					onPressIn={handlePressIn}
+					onPressOut={handlePressOut}
+					disabled={disabled}
+				/>
 			</View>
 		</View>
 	);
