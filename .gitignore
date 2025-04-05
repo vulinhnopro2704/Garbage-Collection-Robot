@@ -1,0 +1,42 @@
+# Virtual environment
+*venv/
+*env/
+.venv
+ENV/
+*.pyc
+__pycache__/
+
+# Django stuff
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+local_settings.py
+
+
+# PyTorch model
+*.pt
+runs/
+weights/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Firebase private config (nếu có file json chứa khóa)
+firebase-adminsdk*.json
+firebase_key.json
+
+# React Native (nếu cùng repo hoặc sử dụng chung folder)
+node_modules/
+android/
+ios/
+*.keystore
+*.apk
+
+# Logs
+*.log
+nohup.out
