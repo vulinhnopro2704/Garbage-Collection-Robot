@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { PermissionsAndroid, Platform } from "react-native";
+import { PermissionsAndroid, Platform, Alert } from "react-native";
 
 // Service and characteristic UUIDs for Raspberry Pi communication
 const SERVICE_UUID = "YOUR_SERVICE_UUID";
@@ -23,6 +23,11 @@ const isDevBuild = () => {
 		console.log("Not in a development build:", e);
 		return false;
 	}
+};
+
+// Web and Expo Go compatibility
+const isWebOrExpoGo = () => {
+	return Platform.OS === "web" || !isDevBuild();
 };
 
 export const useBluetoothConnection = () => {
@@ -50,6 +55,10 @@ export const useBluetoothConnection = () => {
 					setError("Bluetooth module not available");
 				}
 			} else {
+				// Handle Expo Go or web gracefully
+				console.log(
+					"Running in Expo Go or web - Bluetooth functionality limited"
+				);
 				setError(
 					"Bluetooth functionality requires a development build"
 				);
@@ -68,7 +77,7 @@ export const useBluetoothConnection = () => {
 
 	// Request permissions (Android only)
 	const requestPermissions = useCallback(async () => {
-		if (!isAvailable) return false;
+		if (!isAvailable || isWebOrExpoGo()) return false;
 
 		if (Platform.OS === "android") {
 			try {
@@ -89,8 +98,35 @@ export const useBluetoothConnection = () => {
 		return true;
 	}, [isAvailable]);
 
-	// Scan for devices
+	// Scan for devices - now with mock devices for web/Expo Go for testing UI
 	const scanForDevices = useCallback(async () => {
+		if (isWebOrExpoGo()) {
+			// Provide mock devices for Expo Go and web for UI testing
+			setIsScanning(true);
+			setError(null);
+
+			// Simulate delay to mimic real scanning
+			setTimeout(() => {
+				setDevices([
+					{
+						id: "mock-device-1",
+						name: "Mock Raspberry Pi",
+						rssi: -65,
+						isConnectable: true,
+					},
+					{
+						id: "mock-device-2",
+						name: "Mock Smart Bin",
+						rssi: -72,
+						isConnectable: true,
+					},
+				]);
+				setIsScanning(false);
+			}, 2000);
+
+			return;
+		}
+
 		if (!isAvailable || !bleManager) {
 			setError("Bluetooth functionality requires a development build");
 			return;
@@ -167,15 +203,47 @@ export const useBluetoothConnection = () => {
 
 	// Stop scanning
 	const stopScan = useCallback(() => {
+		if (isWebOrExpoGo()) {
+			setIsScanning(false);
+			return;
+		}
+
 		if (bleManager && isScanning) {
 			bleManager.stopDeviceScan();
 			setIsScanning(false);
 		}
 	}, [bleManager, isScanning]);
 
-	// Connect to a device
+	// Connect to a device - with mock functionality for web/Expo Go
 	const connectDevice = useCallback(
 		async (deviceId: string) => {
+			if (isWebOrExpoGo()) {
+				// Mock connection for Expo Go or web
+				setIsConnecting(true);
+				setError(null);
+
+				// Simulate connection delay
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+
+				const mockDevice = devices.find((d) => d.id === deviceId);
+				if (mockDevice) {
+					setConnectedDevice(mockDevice);
+					setIsConnected(true);
+					setIsConnecting(false);
+
+					// Mock data reception
+					setTimeout(() => {
+						setReceivedData('{"status": "online", "battery": 85}');
+					}, 2000);
+
+					return mockDevice;
+				}
+
+				setIsConnecting(false);
+				setError("Mock device not found");
+				return null;
+			}
+
 			if (!isAvailable || !bleManager) {
 				setError(
 					"Bluetooth functionality requires a development build"
@@ -245,11 +313,19 @@ export const useBluetoothConnection = () => {
 				return null;
 			}
 		},
-		[bleManager, isAvailable]
+		[bleManager, isAvailable, devices]
 	);
 
 	// Disconnect from device
 	const disconnect = useCallback(async () => {
+		if (isWebOrExpoGo()) {
+			// Mock disconnect for Expo Go or web
+			setConnectedDevice(null);
+			setIsConnected(false);
+			console.log("Mock disconnection successful");
+			return;
+		}
+
 		if (connectedDevice) {
 			try {
 				await connectedDevice.cancelConnection();
@@ -269,6 +345,20 @@ export const useBluetoothConnection = () => {
 	// Send command to device
 	const sendCommand = useCallback(
 		async (command: string) => {
+			if (isWebOrExpoGo()) {
+				// Mock command sending for Expo Go or web
+				console.log(`Mock command sent: ${command}`);
+
+				// Simulate response after command
+				setTimeout(() => {
+					setReceivedData(
+						`{"command": "${command}", "status": "success"}`
+					);
+				}, 500);
+
+				return true;
+			}
+
 			if (!connectedDevice || !isConnected) {
 				setError("Cannot send command: not connected to device");
 				return false;

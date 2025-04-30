@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import DirectionControls from "../module/direction-controls";
 import { ActionControls } from "../ui/action-control";
 import { Colors } from "@/constants/Colors";
-import { RobotCommand } from "@/app/(tabs)";
+import { RobotCommand } from "@/constants/command"; // Sửa lại đường dẫn import đúng
 
 type Props = {
 	isPoweredOn: boolean;

@@ -37,13 +37,13 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="explore"
+				name="bluetooth"
 				options={{
-					title: "Explore",
+					title: "Bluetooth",
 					tabBarIcon: ({ color }) => (
 						<IconSymbol
 							size={28}
-							name="paperplane.fill"
+							name="radiowaves.left"
 							color={color}
 						/>
 					),
@@ -52,24 +52,11 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="setting"
 				options={{
-					title: "Setting",
+					title: "Settings",
 					tabBarIcon: ({ color }) => (
 						<IconSymbol
 							size={28}
 							name="gearshape.fill"
-							color={color}
-						/>
-					),
-				}}
-			/>
-			<Tabs.Screen
-				name="control"
-				options={{
-					title: "Control",
-					tabBarIcon: ({ color }) => (
-						<IconSymbol
-							size={28}
-							name="person.fill"
 							color={color}
 						/>
 					),
