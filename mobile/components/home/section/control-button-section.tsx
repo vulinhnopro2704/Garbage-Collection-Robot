@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import DirectionControls from "../direction-controls";
+import DirectionControls from "../module/direction-controls";
 import { ActionControls } from "../ui/action-control";
 import { Colors } from "@/constants/Colors";
 import { RobotCommand } from "@/app/(tabs)";

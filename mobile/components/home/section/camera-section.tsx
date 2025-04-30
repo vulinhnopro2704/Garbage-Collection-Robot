@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import CameraFrame from "../camera-frame";
+import CameraFrame from "../module/camera-frame";
 import { Colors } from "@/constants/Colors";
 
 type props = {
