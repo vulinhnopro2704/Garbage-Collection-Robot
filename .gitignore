@@ -1,6 +1,9 @@
 # Virtual environment
 *venv/
 *env/
+*.env
+*/.env
+.env
 .venv
 ENV/
 *.pyc
@@ -40,3 +43,4 @@ ios/
 # Logs
 *.log
 nohup.out
+runs
