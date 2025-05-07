@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 	ActivityIndicator,
 	Alert,
-	Button,
+	Dimensions,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
@@ -16,9 +16,13 @@ import { Colors } from "@/constants/Colors";
 
 interface CameraFrameProps {
 	disabled: boolean;
+	isFullscreen?: boolean;
 }
 
-const CameraFrame: React.FC<CameraFrameProps> = ({ disabled }) => {
+const CameraFrame: React.FC<CameraFrameProps> = ({
+	disabled,
+	isFullscreen = false,
+}) => {
 	const [facing, setFacing] = useState<CameraType>("back");
 	const [permission, requestPermission] = useCameraPermissions();
 	const [imageUri, setImageUri] = useState<string | null>(null);
@@ -158,7 +162,13 @@ const CameraFrame: React.FC<CameraFrameProps> = ({ disabled }) => {
 	}
 
 	return (
-		<View style={[styles.container, disabled && styles.disabled]}>
+		<View
+			style={[
+				styles.container,
+				isFullscreen && styles.fullscreenContainer,
+				disabled && styles.disabled,
+			]}
+		>
 			{!imageUri ? (
 				<View style={styles.cameraContainer}>
 					<CameraView
@@ -197,7 +207,7 @@ const CameraFrame: React.FC<CameraFrameProps> = ({ disabled }) => {
 					<Image
 						source={{ uri: detectedImageUri || imageUri }}
 						style={styles.image}
-						resizeMode="contain"
+						resizeMode={isFullscreen ? "cover" : "contain"}
 					/>
 
 					<View style={styles.imageControlsContainer}>
@@ -263,6 +273,11 @@ const styles = StyleSheet.create({
 		flex: 1,
 		borderRadius: 12,
 		overflow: "hidden",
+	},
+	fullscreenContainer: {
+		width: Dimensions.get("window").width,
+		height: Dimensions.get("window").height,
+		borderRadius: 0,
 	},
 	centered: {
 		justifyContent: "center",

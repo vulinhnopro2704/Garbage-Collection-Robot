@@ -1,24 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, SafeAreaView, StatusBar } from "react-native";
-
+import React, { useEffect } from "react";
+import {
+	View,
+	StyleSheet,
+	SafeAreaView,
+	StatusBar,
+	TouchableOpacity,
+} from "react-native";
 import { Audio } from "expo-av";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+
 import { Colors } from "@/constants/Colors";
 import Header from "@/components/home/section/header";
-import PowerAndModeToggle from "@/components/home/section/power-and-mode-toggle";
 import CameraSection from "@/components/home/section/camera-section";
 import ControlButtonSection from "@/components/home/section/control-button-section";
-import SpeedSliderSection from "@/components/home/section/speed-slider-section";
+import ConnectionStatusIndicator from "@/components/home/ui/connection-status";
 import { useSocket } from "@/hooks/useSocket";
-import SpeedSlider from "@/components/home/ui/speed-slider";
-import { RobotCommand, SpeedCommand } from "@/constants/command";
+import { RobotCommand } from "@/constants/command";
+import { useRobotStore } from "@/store/robotStore";
 
 export default function ControlScreen(): React.ReactElement {
-	const [isAutoMode, setIsAutoMode] = useState<boolean>(false);
-	const [speed, setSpeed] = useState<number>(50);
-	const [isPoweredOn, setIsPoweredOn] = useState<boolean>(false);
-	const [sound, setSound] = useState<Audio.Sound | null>(null);
+	const router = useRouter();
+	const [sound, setSound] = React.useState<Audio.Sound | null>(null);
 
-	const { isConnected, connect, sendCommand } = useSocket();
+	// Get robot state from Zustand store
+	const { isPoweredOn, isAutoMode, speed } = useRobotStore();
+
+	const { connect, sendCommand } = useSocket();
 
 	async function playButtonSound(): Promise<void> {
 		try {
@@ -41,16 +49,9 @@ export default function ControlScreen(): React.ReactElement {
 	}, [sound]);
 
 	useEffect(() => {
-		if (!isConnected) {
-			connect();
-		}
-	}, [connect, isConnected]);
-
-	useEffect(() => {
-		if (!isConnected) {
-			connect();
-		}
-	}, [isConnected, connect]);
+		// Attempt to connect to the WebSocket server when the component mounts
+		connect();
+	}, [connect]);
 
 	const handleCommand = (command: RobotCommand): void => {
 		if (!isPoweredOn) return;
@@ -58,31 +59,32 @@ export default function ControlScreen(): React.ReactElement {
 		sendCommand(command, speed);
 	};
 
-	const handleModeChange = (autoMode: boolean): void => {
-		setIsAutoMode(autoMode);
-		playButtonSound().catch(console.error);
-		sendCommand(autoMode ? "AUTO_MODE" : "MANUAL_MODE", speed);
-	};
-
-	const handlePowerToggle = (isOn: boolean): void => {
-		setIsPoweredOn(isOn);
-		playButtonSound().catch(console.error);
-		sendCommand(isOn ? "POWER_ON" : "POWER_OFF", speed);
+	const navigateToSettings = () => {
+		router.push("/setting");
 	};
 
 	return (
 		<SafeAreaView style={styles.container}>
 			<StatusBar barStyle="light-content" />
-			<Header />
-			{/* Power and Mode controls in a single row */}
-			<PowerAndModeToggle
-				handleModeChange={handleModeChange}
-				handlePowerToggle={handlePowerToggle}
-				isAutoMode={isAutoMode}
-				isPoweredOn={isPoweredOn}
-			/>
-			{/* Camera frame and detection section */}
-			<CameraSection isPoweredOn />
+
+			{/* Header with settings button */}
+			<View style={styles.headerContainer}>
+				<Header />
+				<TouchableOpacity
+					style={styles.settingsButton}
+					onPress={navigateToSettings}
+				>
+					<MaterialIcons
+						name="settings"
+						size={28}
+						color={Colors.text}
+					/>
+				</TouchableOpacity>
+			</View>
+
+			{/* Camera section with fullscreen capability */}
+			<CameraSection />
+
 			{/* Control buttons section */}
 			<ControlButtonSection
 				handleCommand={handleCommand}
@@ -90,17 +92,9 @@ export default function ControlScreen(): React.ReactElement {
 				isPoweredOn={isPoweredOn}
 			/>
 
-			{/* Speed slider */}
-			<SpeedSliderSection isPoweredOn setSpeed={setSpeed} speed={speed} />
-			<View style={[styles.section, styles.speedSection]}>
-				<SpeedSlider
-					speed={speed}
-					onSpeedChange={setSpeed}
-					disabled={!isPoweredOn}
-					onValueChangeEnd={(value: number) =>
-						sendCommand(`SPEED_${value}` as SpeedCommand, speed)
-					}
-				/>
+			{/* Connection status indicator at the bottom */}
+			<View style={styles.statusBar}>
+				<ConnectionStatusIndicator />
 			</View>
 		</SafeAreaView>
 	);
@@ -112,38 +106,19 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.background,
 		padding: 16,
 	},
-	section: {
-		marginVertical: 8,
-		padding: 12,
-		borderRadius: 16,
-		backgroundColor: Colors.cardBackground,
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.1,
-		shadowRadius: 4,
-		elevation: 3,
-	},
-	controlsSection: {
-		flex: 4,
+	headerContainer: {
 		flexDirection: "row",
 		justifyContent: "space-between",
-		paddingVertical: 16,
-		paddingHorizontal: 8,
-		minHeight: 220,
+		alignItems: "center",
+		marginBottom: 8,
 	},
-	directionControlsContainer: {
-		flex: 1,
-		marginRight: 8,
+	settingsButton: {
+		padding: 8,
+		borderRadius: 20,
+		backgroundColor: Colors.cardBackground,
 	},
-	actionControlsContainer: {
-		flex: 1,
-		marginLeft: 8,
-	},
-	speedSection: {
+	statusBar: {
 		marginTop: 8,
-		paddingVertical: 16,
-	},
-	disabledSection: {
-		opacity: 0.7,
+		paddingVertical: 8,
 	},
 });

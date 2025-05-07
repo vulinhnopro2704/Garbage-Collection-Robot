@@ -34,6 +34,7 @@ export const Colors = {
 	// Text colors
 	text: "#1C1C1E", // Almost black - primary text
 	textSecondary: "#8E8E93", // Gray - secondary text
+	textDim: "#6E6E73", // Dimmed text for subtitles
 
 	// Status colors
 	success: "#4CD964", // Green - success states and "on" indicators
@@ -44,6 +45,7 @@ export const Colors = {
 	// Control-specific colors
 	sliderTrack: "#E5E5EA", // Light gray - slider background
 	toggleBackground: "#E5E5EA", // Light gray - toggle background when off
+	lightGray: "#DEDEDE", // Light gray for disabled buttons
 
 	// Other UI elements
 	border: "#C7C7CC", // Light gray - borders

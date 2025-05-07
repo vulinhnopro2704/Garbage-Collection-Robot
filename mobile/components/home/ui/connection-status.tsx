@@ -1,53 +1,49 @@
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Animated, Easing } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
+import { useRobotStore } from "@/store/robotStore";
 
 interface ConnectionStatusProps {
-	isConnected: boolean;
+	minimal?: boolean;
 }
 
-const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ isConnected }) => {
-	const blinkAnim = React.useRef(new Animated.Value(0)).current;
+const ConnectionStatusIndicator: React.FC<ConnectionStatusProps> = ({
+	minimal = false,
+}) => {
+	const { isConnected } = useRobotStore();
 
-	useEffect(() => {
-		if (!isConnected) {
-			// Create blinking animation for disconnected state
-			Animated.loop(
-				Animated.sequence([
-					Animated.timing(blinkAnim, {
-						toValue: 1,
-						duration: 500,
-						useNativeDriver: true,
-						easing: Easing.ease,
-					}),
-					Animated.timing(blinkAnim, {
-						toValue: 0,
-						duration: 500,
-						useNativeDriver: true,
-						easing: Easing.ease,
-					}),
-				])
-			).start();
-		} else {
-			// Stop animation if connected
-			blinkAnim.setValue(1);
-			blinkAnim.stopAnimation();
-		}
-	}, [isConnected, blinkAnim]);
+	if (minimal) {
+		return (
+			<View
+				style={[
+					styles.indicator,
+					isConnected ? styles.connected : styles.disconnected,
+				]}
+			/>
+		);
+	}
 
 	return (
 		<View style={styles.container}>
-			<Animated.View style={{ opacity: isConnected ? 1 : blinkAnim }}>
-				<FontAwesome5
-					name={isConnected ? "bluetooth" : "bluetooth-b"}
-					size={20}
-					color={isConnected ? "#4CD964" : "#FF3B30"}
-				/>
-			</Animated.View>
+			<View
+				style={[
+					styles.indicator,
+					isConnected ? styles.connected : styles.disconnected,
+				]}
+			/>
+			<MaterialIcons
+				name={isConnected ? "wifi" : "wifi-off"}
+				size={18}
+				color={isConnected ? Colors.success : Colors.error}
+				style={styles.icon}
+			/>
 			<Text
 				style={[
-					styles.statusText,
-					{ color: isConnected ? "#4CD964" : "#FF3B30" },
+					styles.text,
+					isConnected
+						? styles.connectedText
+						: styles.disconnectedText,
 				]}
 			>
 				{isConnected ? "Connected" : "Disconnected"}
@@ -61,12 +57,34 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		padding: 8,
+		borderRadius: 16,
+		backgroundColor: Colors.cardBackground,
 	},
-	statusText: {
-		marginLeft: 8,
-		fontWeight: "600",
+	indicator: {
+		width: 8,
+		height: 8,
+		borderRadius: 4,
+		marginRight: 4,
+	},
+	connected: {
+		backgroundColor: Colors.success,
+	},
+	disconnected: {
+		backgroundColor: Colors.error,
+	},
+	icon: {
+		marginRight: 4,
+	},
+	text: {
 		fontSize: 14,
+		fontWeight: "500",
+	},
+	connectedText: {
+		color: Colors.success,
+	},
+	disconnectedText: {
+		color: Colors.error,
 	},
 });
 
-export default ConnectionStatus;
+export default ConnectionStatusIndicator;

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { RobotCommand } from "@/constants/command";
+import RotateBinButton from "./rotate-bin-button";
 
 interface ActionControlsProps {
 	onPress: (command: RobotCommand) => void;
@@ -18,20 +19,17 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
 	onPress,
 	disabled = false,
 }) => {
-	// Create animated values for each button
-	const scaleAnims = {
-		grab: React.useRef(new Animated.Value(1)).current,
-		rotate: React.useRef(new Animated.Value(1)).current,
-	};
+	// Create animated values for grab button
+	const grabAnim = React.useRef(new Animated.Value(1)).current;
 
-	const animatePress = (key: keyof typeof scaleAnims) => {
+	const animatePress = () => {
 		Animated.sequence([
-			Animated.timing(scaleAnims[key], {
+			Animated.timing(grabAnim, {
 				toValue: 0.9,
 				duration: 100,
 				useNativeDriver: true,
 			}),
-			Animated.timing(scaleAnims[key], {
+			Animated.timing(grabAnim, {
 				toValue: 1,
 				duration: 100,
 				useNativeDriver: true,
@@ -39,19 +37,11 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
 		]).start();
 	};
 
-	const handlePress = (action: string) => {
+	const handleGrab = () => {
 		if (disabled) return;
 
-		switch (action) {
-			case "grab":
-				animatePress("grab");
-				onPress("GRAB_TRASH");
-				break;
-			case "rotate":
-				animatePress("rotate");
-				onPress("ROTATE_BIN");
-				break;
-		}
+		animatePress();
+		onPress("GRAB_TRASH");
 	};
 
 	return (
@@ -60,7 +50,7 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
 				{/* Grab Button */}
 				<Animated.View
 					style={{
-						transform: [{ scale: scaleAnims.grab }],
+						transform: [{ scale: grabAnim }],
 						marginBottom: 20,
 					}}
 				>
@@ -70,7 +60,7 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
 							styles.grabButton,
 							disabled && styles.disabled,
 						]}
-						onPress={() => handlePress("grab")}
+						onPress={handleGrab}
 						disabled={disabled}
 						activeOpacity={0.7}
 					>
@@ -79,24 +69,10 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
 					</TouchableOpacity>
 				</Animated.View>
 
-				{/* Rotate Button */}
-				<Animated.View
-					style={{ transform: [{ scale: scaleAnims.rotate }] }}
-				>
-					<TouchableOpacity
-						style={[
-							styles.button,
-							styles.rotateButton,
-							disabled && styles.disabled,
-						]}
-						onPress={() => handlePress("rotate")}
-						disabled={disabled}
-						activeOpacity={0.7}
-					>
-						<FontAwesome5 name="sync-alt" size={24} color="#fff" />
-						<Text style={styles.buttonText}>Rotate</Text>
-					</TouchableOpacity>
-				</Animated.View>
+				{/* Use the new RotateBinButton component */}
+				<View style={styles.rotateContainer}>
+					<RotateBinButton disabled={disabled} />
+				</View>
 			</View>
 		</View>
 	);
@@ -130,9 +106,6 @@ const styles = StyleSheet.create({
 	grabButton: {
 		backgroundColor: "#FF9500",
 	},
-	rotateButton: {
-		backgroundColor: "#5856D6",
-	},
 	buttonText: {
 		color: "#fff",
 		fontWeight: "bold",
@@ -140,5 +113,8 @@ const styles = StyleSheet.create({
 	},
 	disabled: {
 		opacity: 0.5,
+	},
+	rotateContainer: {
+		minWidth: 120,
 	},
 });

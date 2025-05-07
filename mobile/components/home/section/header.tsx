@@ -1,29 +1,62 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import SettingsButton from "../ui/setting-button";
-import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
+import { useRobotStore } from "@/store/robotStore";
+
 export default function Header() {
+	const { isPoweredOn } = useRobotStore();
+
 	return (
 		<View style={styles.header}>
-			{/* <ConnectionStatus isConnected={isConnected} /> */}
-			<Text style={styles.title}>Control</Text>
-			<SettingsButton onPress={() => router.push("/(tabs)/setting")} />
+			<View style={styles.titleContainer}>
+				<Text style={styles.title}>SmartBin</Text>
+				<View
+					style={[
+						styles.statusIndicator,
+						isPoweredOn ? styles.poweredOn : styles.poweredOff,
+					]}
+				/>
+			</View>
+
+			<View style={styles.subtitle}>
+				<Text style={styles.subtitleText}>Control Panel</Text>
+			</View>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	header: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
 		marginBottom: 10,
 		paddingVertical: 4,
 	},
+	titleContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+	},
 	title: {
-		fontSize: 20,
+		fontSize: 24,
 		fontWeight: "bold",
 		color: Colors.text,
+		marginRight: 10,
+	},
+	subtitle: {
+		marginTop: 2,
+	},
+	subtitleText: {
+		fontSize: 14,
+		color: Colors.textDim,
+		fontWeight: "500",
+	},
+	statusIndicator: {
+		width: 10,
+		height: 10,
+		borderRadius: 5,
+	},
+	poweredOn: {
+		backgroundColor: Colors.success,
+	},
+	poweredOff: {
+		backgroundColor: Colors.error,
 	},
 });
