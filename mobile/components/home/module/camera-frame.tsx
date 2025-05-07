@@ -44,14 +44,7 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 		try {
 			const photo = await cameraRef.current.takePictureAsync();
 
-			// Resize and compress the image for faster upload
-			const manipResult = await ImageManipulator.manipulateAsync(
-				photo.uri,
-				[{ resize: { width: 800 } }],
-				{ compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
-			);
-
-			setImageUri(manipResult.uri);
+			setImageUri(photo.uri);
 			setDetectedImageUri(null);
 			setDetectionResult(null);
 		} catch (error) {
@@ -175,6 +168,8 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 						ref={cameraRef}
 						style={styles.camera}
 						facing={facing}
+						mute={false}
+						responsiveOrientationWhenOrientationLocked
 					>
 						<View style={styles.buttonContainer}>
 							<TouchableOpacity
