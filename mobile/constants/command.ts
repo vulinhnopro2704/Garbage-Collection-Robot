@@ -5,7 +5,7 @@ export type DirectionCommand =
 	| "LEFT"
 	| "RIGHT"
 	| "STOP";
-export type ActionCommand = "GRAB_TRASH" | "ROTATE_BIN";
+export type ActionCommand = "GRAB_TRASH" | "ROTATE_BIN" | "TAKE_PICTURE";
 export type ModeCommand = "AUTO_MODE" | "MANUAL_MODE";
 export type PowerCommand = "POWER_ON" | "POWER_OFF";
 export type SpeedCommand = `SPEED_${number}`;

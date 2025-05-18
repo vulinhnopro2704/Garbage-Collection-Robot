@@ -52,4 +52,4 @@ def predict_image(image):
     processed_img_base64 = base64.b64encode(buffer).decode('utf-8')
     
     # Return tuple of detection results and processed image base64
-    return result.to_json(), processed_img_base64
+    return result, processed_img_base64

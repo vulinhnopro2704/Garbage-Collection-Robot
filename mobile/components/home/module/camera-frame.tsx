@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
 	View,
 	Text,
@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
-import * as ImageManipulator from "expo-image-manipulator";
 import { Colors } from "@/constants/Colors";
+import { useSocket } from "@/hooks/useSocket";
 
 interface CameraFrameProps {
 	disabled: boolean;
@@ -37,12 +37,19 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 		setFacing((current) => (current === "back" ? "front" : "back"));
 	};
 
-	// Take a picture using the camera
+	const { sendCommand } = useSocket();
+
+	// Take a picture with maximum quality, skip default processing
 	const takePicture = async () => {
 		if (disabled || !cameraRef.current) return;
 
 		try {
-			const photo = await cameraRef.current.takePictureAsync();
+			const photo = await cameraRef.current.takePictureAsync({
+				quality: 1, // max quality
+				skipProcessing: true, // skip extra compression
+			});
+
+			// sendCommand("TAKE_PICTURE", 0); // send command to server
 
 			setImageUri(photo.uri);
 			setDetectedImageUri(null);
@@ -53,14 +60,13 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 		}
 	};
 
-	// Process the image with the detection API
+	// Process the image with the detection API without extra compression
 	const processImage = async () => {
 		if (!imageUri || disabled) return;
 
 		setIsProcessing(true);
 
 		try {
-			// Create a form data object to send the image
 			const formData = new FormData();
 			formData.append("image", {
 				uri: imageUri,
@@ -68,7 +74,6 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 				name: "upload.jpg",
 			} as any);
 
-			// Make API request to the detection server
 			const response = await fetch(
 				"https://server.course4u.one/detect/",
 				{
@@ -88,7 +93,6 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 			const data = await response.json();
 			console.log("Detection response:", data);
 
-			// Set the processed image URL and detection results
 			setDetectedImageUri(data.processed_image_url);
 			setDetectionResult(data);
 		} catch (error) {
@@ -99,10 +103,9 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 		}
 	};
 
-	// Parse and display detection results
+	// Render detection info unchanged
 	const renderDetectionInfo = () => {
 		if (!detectionResult) return null;
-
 		try {
 			const results = JSON.parse(detectionResult.results);
 			return (
@@ -125,7 +128,6 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 	};
 
 	if (!permission) {
-		// Camera permissions are still loading
 		return (
 			<View style={[styles.container, styles.centered]}>
 				<Text style={styles.permissionText}>
@@ -136,7 +138,6 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 	}
 
 	if (!permission.granted) {
-		// Camera permissions are not granted yet
 		return (
 			<View style={[styles.container, styles.centered]}>
 				<Text style={styles.permissionText}>
@@ -168,7 +169,6 @@ const CameraFrame: React.FC<CameraFrameProps> = ({
 						ref={cameraRef}
 						style={styles.camera}
 						facing={facing}
-						mute={false}
 						responsiveOrientationWhenOrientationLocked
 					>
 						<View style={styles.buttonContainer}>
@@ -283,12 +283,6 @@ const styles = StyleSheet.create({
 		borderRadius: 12,
 		overflow: "hidden",
 	},
-	cameraPlaceholder: {
-		flex: 1,
-		backgroundColor: "#2c3e50",
-		justifyContent: "center",
-		alignItems: "center",
-	},
 	permissionText: {
 		color: "white",
 		fontSize: 18,
@@ -304,11 +298,6 @@ const styles = StyleSheet.create({
 		color: "white",
 		fontSize: 16,
 		fontWeight: "bold",
-	},
-	placeholderText: {
-		color: "white",
-		fontSize: 18,
-		marginBottom: 100,
 	},
 	camera: {
 		flex: 1,
