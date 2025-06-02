@@ -2,7 +2,6 @@ import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
-import { useRobotStore } from "@/store/robotStore";
 import { useSocket } from "@/hooks/useSocket";
 
 interface RotateBinButtonProps {
@@ -12,7 +11,7 @@ interface RotateBinButtonProps {
 const RotateBinButton: React.FC<RotateBinButtonProps> = ({
 	disabled = false,
 }) => {
-	const { binStatus } = useRobotStore();
+	const { binStatus } = useSocket();
 	const { isConnected, sendCommand } = useSocket();
 
 	const handleRotateBin = () => {
@@ -31,7 +30,7 @@ const RotateBinButton: React.FC<RotateBinButtonProps> = ({
 
 			{binStatus && (
 				<View style={styles.statusBadge}>
-					<Text style={styles.badgeText}>{binStatus.currentBin}</Text>
+					<Text style={styles.badgeText}>{binStatus}</Text>
 				</View>
 			)}
 		</TouchableOpacity>

@@ -8,9 +8,8 @@ import ConnectionSettings from "@/components/setting/section/connection-setting"
 import NotificationSettings from "@/components/setting/section/notification-setting";
 import RecentDetections from "@/components/setting/section/recent-detection";
 import AboutSection from "@/components/setting/section/about-section";
-import { useRobotStore } from "@/store/robotStore";
-import SectionContainer from "@/components/setting/section/section-container";
 import RobotConfigSection from "@/components/setting/section/robot-config-section";
+import { useSocket } from "@/hooks/useSocket";
 
 export default function Setting() {
 	const {
@@ -20,8 +19,7 @@ export default function Setting() {
 		setIsAutoMode,
 		speed,
 		setSpeed,
-	} = useRobotStore();
-
+	} = useSocket();
 	return (
 		<SafeAreaView style={styles.container}>
 			<StatusBar style="dark" />

@@ -5,6 +5,7 @@ import {
 	SafeAreaView,
 	StatusBar,
 	TouchableOpacity,
+	Text,
 } from "react-native";
 import { Audio } from "expo-av";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,16 +18,26 @@ import ControlButtonSection from "@/components/home/section/control-button-secti
 import ConnectionStatusIndicator from "@/components/home/ui/connection-status";
 import { useSocket } from "@/hooks/useSocket";
 import { RobotCommand } from "@/constants/command";
-import { useRobotStore } from "@/store/robotStore";
 
 export default function ControlScreen(): React.ReactElement {
 	const router = useRouter();
 	const [sound, setSound] = React.useState<Audio.Sound | null>(null);
 
-	// Get robot state from Zustand store
-	const { isPoweredOn, isAutoMode, speed } = useRobotStore();
+	// Get all robot state and functions from useSocket
+	const {
+		// Connection states
+		connect,
+		sendCommand,
+		isConnected,
+		isConnecting,
+		error,
+		reconnectAttempt,
 
-	const { connect, sendCommand } = useSocket();
+		// Robot states
+		isPoweredOn,
+		isAutoMode,
+		speed,
+	} = useSocket();
 
 	async function playButtonSound(): Promise<void> {
 		try {
@@ -63,9 +74,40 @@ export default function ControlScreen(): React.ReactElement {
 		router.push("/setting");
 	};
 
+	// Function to manually trigger reconnection
+	const handleManualReconnect = () => {
+		connect();
+	};
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<StatusBar barStyle="light-content" />
+
+			{/* Connection status banner at the top */}
+			<View
+				style={[
+					styles.connectionBanner,
+					isConnected
+						? styles.connectedBanner
+						: styles.disconnectedBanner,
+				]}
+			>
+				<Text style={styles.connectionText}>
+					{isConnected
+						? "Connected to Robot"
+						: isConnecting
+						? `Connecting... (Attempt ${reconnectAttempt})`
+						: "Disconnected"}
+				</Text>
+				{!isConnected && !isConnecting && (
+					<TouchableOpacity
+						style={styles.reconnectButton}
+						onPress={handleManualReconnect}
+					>
+						<Text style={styles.reconnectText}>Reconnect</Text>
+					</TouchableOpacity>
+				)}
+			</View>
 
 			{/* Header with settings button */}
 			<View style={styles.headerContainer}>
@@ -94,7 +136,12 @@ export default function ControlScreen(): React.ReactElement {
 
 			{/* Connection status indicator at the bottom */}
 			<View style={styles.statusBar}>
-				<ConnectionStatusIndicator />
+				<ConnectionStatusIndicator
+					isConnected={isConnected}
+					isConnecting={isConnecting}
+					error={error}
+					reconnectAttempt={reconnectAttempt}
+				/>
 			</View>
 		</SafeAreaView>
 	);
@@ -120,5 +167,33 @@ const styles = StyleSheet.create({
 	statusBar: {
 		marginTop: 8,
 		paddingVertical: 8,
+	},
+	connectionBanner: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		padding: 8,
+		marginBottom: 8,
+		borderRadius: 8,
+	},
+	connectedBanner: {
+		backgroundColor: "rgba(0, 255, 0, 0.2)",
+	},
+	disconnectedBanner: {
+		backgroundColor: "rgba(255, 0, 0, 0.2)",
+	},
+	connectionText: {
+		fontWeight: "bold",
+		color: Colors.text,
+	},
+	reconnectButton: {
+		backgroundColor: Colors.lightGray,
+		paddingHorizontal: 10,
+		paddingVertical: 5,
+		borderRadius: 5,
+	},
+	reconnectText: {
+		color: "white",
+		fontWeight: "bold",
 	},
 });

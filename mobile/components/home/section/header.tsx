@@ -1,10 +1,10 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Colors } from "@/constants/Colors";
-import { useRobotStore } from "@/store/robotStore";
+import { useSocket } from "@/hooks/useSocket";
 
 export default function Header() {
-	const { isPoweredOn } = useRobotStore();
+	const { isPoweredOn } = useSocket();
 
 	return (
 		<View style={styles.header}>

@@ -3,12 +3,12 @@ import { StyleSheet, View, TouchableOpacity, Modal } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import CameraFrame from "../module/camera-frame";
 import { Colors } from "@/constants/Colors";
-import { useRobotStore } from "@/store/robotStore";
 import BinStatusDisplay from "../ui/bin-status-display";
+import { useSocket } from "@/hooks/useSocket";
 
 export default function CameraSection(): React.ReactElement {
 	const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-	const { isPoweredOn, binStatus } = useRobotStore();
+	const { isPoweredOn, binStatus } = useSocket();
 
 	const toggleFullscreen = () => {
 		setIsFullscreen(!isFullscreen);

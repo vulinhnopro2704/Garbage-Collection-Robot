@@ -1,11 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useRobotStore } from "@/store/robotStore";
 import { Colors } from "@/constants/Colors";
+import { useSocket } from "@/hooks/useSocket";
 
 const BinStatusDisplay = () => {
-	const { binStatus } = useRobotStore();
+	const { binStatus } = useSocket();
 
 	if (!binStatus) {
 		return null;
@@ -17,29 +17,16 @@ const BinStatusDisplay = () => {
 				<MaterialIcons
 					name="autorenew"
 					size={24}
-					color={
-						binStatus.status === "success"
-							? Colors.success
-							: Colors.warning
-					}
+					color={Colors.success}
 				/>
 			</View>
 			<View style={styles.textContainer}>
 				<Text style={styles.title}>Bin Status</Text>
 				<Text style={styles.statusText}>
 					Current Bin:{" "}
-					<Text style={styles.highlight}>{binStatus.currentBin}</Text>
+					<Text style={styles.highlight}>{binStatus}</Text>
 				</Text>
-				<Text
-					style={[
-						styles.statusBadge,
-						binStatus.status === "success"
-							? styles.successBadge
-							: styles.warningBadge,
-					]}
-				>
-					{binStatus.status.toUpperCase()}
-				</Text>
+				<Text style={[styles.statusBadge]}>{binStatus}</Text>
 			</View>
 		</View>
 	);

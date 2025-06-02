@@ -2598,6 +2598,14 @@
     "@react-navigation/elements" "^2.4.1"
     color "^4.2.3"
 
+"@react-navigation/bottom-tabs@^7.3.13":
+  version "7.3.13"
+  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.3.13.tgz#985d707ca92d45af2fa12fff7d1d43365d6218ec"
+  integrity sha512-J3MWXBJc3y6hefZNRqdj/JD4nzIDLzZL5GIYj89pR6oRf2Iibz9t1qV7yzxEc1KOaNDkXVZ/5U16PArEJFfykQ==
+  dependencies:
+    "@react-navigation/elements" "^2.4.2"
+    color "^4.2.3"
+
 "@react-navigation/core@^7.8.5":
   version "7.8.5"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-7.8.5.tgz#3ea29c75da1e5e6552b3be91a085092eddf6be83"
@@ -2622,6 +2630,13 @@
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.4.1.tgz#c43777d9be06dbf506a9842cd41e3482a49ac5e9"
   integrity sha512-L10zs15NSgx+Msd6UmUfPx8+bEe/KnhcNFKsoPbz0U49sJdU6qogcbNAPi1RUs4UDtfnnubUhbXZxfaYJTCwCA==
+  dependencies:
+    color "^4.2.3"
+
+"@react-navigation/elements@^2.4.2":
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.4.2.tgz#22680bcbec8d59f1aad35934beba83f9e251ed8f"
+  integrity sha512-cudKLsRtOB+i8iDzfBKypdqiHsDy1ruqCfYAtwKEclDmLsxu3/90YXoBtoPyFNyIpsn3GtsJzZsrYWQh78xSWg==
   dependencies:
     color "^4.2.3"
 
@@ -5138,6 +5153,26 @@ expo-modules-core@2.3.12:
   integrity sha512-bOm83mskw1S7xuDX50DlLdx68u0doQ6BZHSU2qTv8P1/5QYeAae3pCgFLq2hoptUNeMF7W+68ShJFTOHAe68BQ==
   dependencies:
     invariant "^2.2.4"
+
+expo-router@^5.0.7:
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/expo-router/-/expo-router-5.0.7.tgz#032c1de9d06237664169959f7178a818d7b0e677"
+  integrity sha512-NlEgRXCKtseDuIHBp87UfkvqsuVrc0MYG+zg33dopaN6wik4RkrWWxUYdNPHub0s/7qMye6zZBY4ZCrXwd/xpA==
+  dependencies:
+    "@expo/metro-runtime" "5.0.4"
+    "@expo/server" "^0.6.2"
+    "@radix-ui/react-slot" "1.2.0"
+    "@react-navigation/bottom-tabs" "^7.3.10"
+    "@react-navigation/native" "^7.1.6"
+    "@react-navigation/native-stack" "^7.3.10"
+    client-only "^0.0.1"
+    invariant "^2.2.4"
+    react-fast-compare "^3.2.2"
+    react-native-is-edge-to-edge "^1.1.6"
+    schema-utils "^4.0.1"
+    semver "~7.6.3"
+    server-only "^0.0.1"
+    shallowequal "^1.1.0"
 
 expo-router@~5.0.6:
   version "5.0.6"
@@ -8393,6 +8428,11 @@ react-native-screens@~4.10.0:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
+react-native-toast-message@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-toast-message/-/react-native-toast-message-2.3.0.tgz#c25fb40d7af4388f6a798efbfca479d53916ed00"
+  integrity sha512-d7LldTK1ei1Bl7RFhoOYw8hVQ4oKPQHORYI//xR9Pyz3HxSlFlvQbueE5X3KLoemRRgBrOUg3zY6DxXnxrVLRg==
+
 react-native-web@^0.20.0:
   version "0.20.0"
   resolved "https://registry.yarnpkg.com/react-native-web/-/react-native-web-0.20.0.tgz#3fb0591999ed4b54d7822a2785547415e8a5c031"
@@ -9606,9 +9646,11 @@ tr46@~0.0.3:
     react-native-reanimated "~3.17.4"
     react-native-safe-area-context "^5.4.0"
     react-native-screens "~4.10.0"
+    react-native-toast-message "^2.3.0"
     react-native-web "^0.20.0"
     react-native-webview "13.13.5"
-    trash-detector "file:C:/Users/vulin/AppData/Local/Yarn/Cache/v6/npm-trash-detector-1.0.0-0abc5820-b4ea-4a30-90a0-1266194e721f-1746593478537/node_modules/trash-detector"
+    trash-detector "file:C:/Users/vulin/AppData/Local/Yarn/Cache/v6/npm-trash-detector-1.0.0-2833ed3e-a8bb-4ccf-992c-15b705d853fe-1748246182856/node_modules/trash-detector"
+    zustand "^5.0.4"
 
 ts-api-utils@^2.0.1:
   version "2.1.0"
