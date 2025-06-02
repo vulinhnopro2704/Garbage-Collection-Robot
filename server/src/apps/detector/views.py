@@ -158,10 +158,18 @@ class ImageDetectAPIView(APIView):
         else:
             notif_response = "No device token provided."
 
+        # Extract only class information for simplified response
+        detected_classes = []
+        if 'boxes' in results_dict:
+            for box in results_dict['boxes']:
+                detected_classes.append({
+                    'classId': box['cls'],
+                    'className': box['class_name']
+                })
+        
+        # Return simplified response
         return Response({
-            "results": results_dict,  # Use the dictionary instead of the raw Results object
+            "detectedClasses": detected_classes,
             "original_image_url": original_upload["url"],
             "processed_image_url": processed_upload["url"],
-            "notification": notif_response,
-            "document_id": doc_ref.id
         })
