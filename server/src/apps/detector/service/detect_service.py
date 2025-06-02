@@ -29,10 +29,7 @@ def predict_image(image):
         img_array = cv2.cvtColor(img_array, cv2.COLOR_RGBA2RGB)
     else:
         img_array = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
-    
-    # Save original image dimensions
-    original_height, original_width = img_array.shape[:2]
-    
+
     # Run prediction
     results = model(img_array, save=True)
     result = results[0]

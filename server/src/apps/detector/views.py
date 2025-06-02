@@ -78,8 +78,59 @@ class ImageDetectAPIView(APIView):
 
         # Lưu kết quả và URL ảnh vào Firestore
         doc_ref = db.collection("detections").document()
+        
+        def convert_results_to_dict(results):
+            """Convert ultralytics Results object to a Firestore-compatible dictionary."""
+            # Extract basic information
+            result_dict = {
+                "path": str(results.path),
+                "orig_shape": list(map(int, results.orig_shape)) if hasattr(results, 'orig_shape') else [],
+                "save_dir": str(results.save_dir),
+                "speed": {
+                    "preprocess": float(results.speed.get("preprocess", 0)),
+                    "inference": float(results.speed.get("inference", 0)),
+                    "postprocess": float(results.speed.get("postprocess", 0))
+                }
+            }
+
+            # Extract detected objects from boxes if available
+            if hasattr(results, 'boxes') and results.boxes is not None:
+                boxes = []
+                for i, box in enumerate(results.boxes):
+                    if hasattr(box, 'xyxy') and box.xyxy is not None:
+                        # Convert numpy arrays to plain Python lists and ensure all values are primitive types
+                        xyxy_list = []
+                        for coord in box.xyxy.tolist()[0]:
+                            xyxy_list.append(float(coord))
+                    else:
+                        xyxy_list = []
+                        
+                    box_dict = {
+                        "xyxy": xyxy_list,
+                        "conf": float(box.conf.item()) if hasattr(box, 'conf') else 0.0,
+                        "cls": int(box.cls.item()) if hasattr(box, 'cls') else 0
+                    }
+                    
+                    # Add class name if available
+                    if hasattr(box, 'cls') and hasattr(results, 'names'):
+                        class_idx = int(box.cls.item())
+                        if class_idx in results.names:
+                            box_dict["class_name"] = str(results.names[class_idx])
+                        else:
+                            box_dict["class_name"] = "unknown"
+                    else:
+                        box_dict["class_name"] = "unknown"
+                        
+                    boxes.append(box_dict)
+                result_dict["boxes"] = boxes
+            
+            return result_dict
+
+        # Convert Results object to a dictionary before saving to Firestore
+        results_dict = convert_results_to_dict(results)
+        
         doc_ref.set({
-            "results": results,
+            "results": results_dict,
             "original_image_url": original_upload["url"],
             "original_image_public_id": original_upload["public_id"],
             "processed_image_url": processed_upload["url"],
@@ -108,7 +159,7 @@ class ImageDetectAPIView(APIView):
             notif_response = "No device token provided."
 
         return Response({
-            "results": results,
+            "results": results_dict,  # Use the dictionary instead of the raw Results object
             "original_image_url": original_upload["url"],
             "processed_image_url": processed_upload["url"],
             "notification": notif_response,
